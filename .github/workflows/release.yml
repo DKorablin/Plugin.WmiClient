@@ -3,7 +3,6 @@ name: Test, Buid, Release
 on:
   push:
     branches: [ "master" ]
-  #workflow_dispatch:
 
 env:
   SolutionName: ${{github.event.repository.name}}
@@ -40,7 +39,7 @@ jobs:
       uses: mathieudutour/github-tag-action@v6.2
       with:
         github_token: ${{secrets.GITHUB_TOKEN}}
-        #custom_tag: 1.0.86
+        #custom_tag: 1.0.0
 
   files_exists:
     name: Checking project existence
@@ -88,7 +87,7 @@ jobs:
     - name: Restoring NuGet packages
       run: nuget restore "${{github.workspace}}\${{env.SolutionName}}.sln"
     - name: Building .NET Framework
-      run: MSBuild -nologo -restore "${{github.workspace}}\${{env.SolutionName}}\${{env.SolutionName}}35.csproj" /property:Configuration=Release -property:OutputPath="${{github.workspace}}/bin/" -property:Version=${{needs.version.outputs.new_version}} -property:AssemblyOriginatorKeyFile="${{ steps.sign_key_file.outputs.filePath }}"
+      run: MSBuild -nologo -restore "${{github.workspace}}\${{env.SolutionName}}\${{env.SolutionName}}35.csproj" /property:Configuration=Release -property:OutputPath="${{github.workspace}}\bin\" -property:Version=${{needs.version.outputs.new_version}} -property:AssemblyOriginatorKeyFile="${{ steps.sign_key_file.outputs.filePath }}"
     - name: Deploying artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -119,11 +118,11 @@ jobs:
     - name: Restoring dependencies
       run: dotnet restore ${{env.SolutionName}}.sln
     - name: Building .NET
-      run: dotnet build "${{github.workspace}}\${{env.SolutionName}}\${{env.SolutionName}}.csproj" --configuration Release --no-restore /p:OutputPath="../bin/" /p:DocumentationFile="../bin/${{env.SolutionName}}.xml" /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${{steps.sign_key_file.outputs.filePath}}" /p:AssemblyVersion=${{needs.version.outputs.new_version}} /p:FileVersion=${{needs.version.outputs.new_version}} /p:InformationalVersion=${{needs.version.outputs.new_version}}
+      run: dotnet build "${{github.workspace}}\${{env.SolutionName}}\${{env.SolutionName}}.csproj" --configuration Release --no-restore /p:OutputPath="..\bin\" /p:DocumentationFile="..\bin\${{env.SolutionName}}.xml" /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${{steps.sign_key_file.outputs.filePath}}" /p:AssemblyVersion=${{needs.version.outputs.new_version}} /p:FileVersion=${{needs.version.outputs.new_version}} /p:InformationalVersion=${{needs.version.outputs.new_version}}
     - name: Deploying artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: net7.0-windows
+        name: NetStandard20
         path: ${{github.workspace}}/bin/*
         if-no-files-found: error
 
@@ -182,10 +181,8 @@ jobs:
         path: bin
     - name: Packing artifacts
       run: nuget pack ${{env.SolutionName}}.dll.nuspec -Version ${{needs.version.outputs.new_version}} -OutputDirectory nupkg
-    - name: Pepare package source
-      run: dotnet nuget add source --username DKorablin --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/DKorablin/index.json"
     - name: Deploying GitHub package
-      run: dotnet nuget push nupkg\*.nupkg --api-key ${{ secrets.GITHUB_TOKEN }} --source "github"
+      run: dotnet nuget push nupkg\*.nupkg --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/DKorablin/index.json
 
   failure_cleanup:
   #error: tag '${{needs.version.outputs.new_tag}}' not found.
