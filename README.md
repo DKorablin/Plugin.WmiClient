@@ -48,10 +48,40 @@ A powerful Windows Management Instrumentation (WMI) testing and exploration tool
 
 ## Installation
 
-### From NuGet
-```powershell
-Install-Package AlphaOmega.SAL.Plugin.WmiClient
-```
+### From GitHub Packages
+
+1. Add GitHub Packages as a NuGet source (one-time setup):
+   ```powershell
+   dotnet nuget add source "https://nuget.pkg.github.com/DKorablin/index.json" --name "GitHub-DKorablin" --username YOUR_GITHUB_USERNAME --password YOUR_GITHUB_PAT --store-password-in-clear-text
+   ```
+   
+   Or add to your `nuget.config`:
+   ```xml
+   <?xml version="1.0" encoding="utf-8"?>
+   <configuration>
+     <packageSources>
+       <add key="GitHub-DKorablin" value="https://nuget.pkg.github.com/DKorablin/index.json" />
+     </packageSources>
+     <packageSourceCredentials>
+       <GitHub-DKorablin>
+         <add key="Username" value="YOUR_GITHUB_USERNAME" />
+         <add key="ClearTextPassword" value="YOUR_GITHUB_PAT" />
+       </GitHub-DKorablin>
+     </packageSourceCredentials>
+   </configuration>
+   ```
+
+2. Install the package:
+   ```powershell
+   dotnet add package AlphaOmega.SAL.Plugin.WmiClient
+   ```
+   
+   Or using Package Manager Console:
+   ```powershell
+   Install-Package AlphaOmega.SAL.Plugin.WmiClient -Source "GitHub-DKorablin"
+   ```
+
+> **Note**: You'll need a GitHub Personal Access Token (PAT) with `read:packages` scope. Create one at [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens).
 
 ### From Source
 1. Clone the repository:
