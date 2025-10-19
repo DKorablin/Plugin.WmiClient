@@ -27,10 +27,6 @@ namespace Plugin.WmiClient.UI
 						ColumnHeader column = lv.Columns[innerLoop];
 						String text = tagData == null ? item.SubItems[column.Index].Text : tagData[column.Text];
 						buffer.Append(text);
-						/*if(String.IsNullOrEmpty(column.Text))
-							buffer.Append(item.SubItems[column.Index].Text);
-						else
-							buffer.AppendFormat("{0}={1}", column.Text, item.SubItems[column.Index].Text);*/
 						if(innerLoop + 1 < lv.Columns.Count)
 							buffer.Append('\t');
 					}
@@ -40,7 +36,6 @@ namespace Plugin.WmiClient.UI
 			}
 
 			Clipboard.SetText(buffer.ToString());
-			//base.CopyListViewItems(columnIndex);
 		}
 	}
 }

@@ -12,8 +12,8 @@ namespace Plugin.WmiClient.UI
 		public NamespacesHost()
 			: base(NamespacesHost.CreateControl())
 		{
-			this.Control.BeforeExpand += Control_BeforeExpand;
-			this.Control.NodeMouseClick += Control_NodeMouseClick;
+			this.Control.BeforeExpand += this.Control_BeforeExpand;
+			this.Control.NodeMouseClick += this.Control_NodeMouseClick;
 		}
 
 		private static TreeView CreateControl()

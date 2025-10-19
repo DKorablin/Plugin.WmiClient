@@ -41,7 +41,7 @@ namespace Plugin.WmiClient
 
 		public PanelWmiBase()
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 			ssTimeSpent.Text = String.Empty;
 			tsbnRun.Enabled = false;
 		}
@@ -59,8 +59,8 @@ namespace Plugin.WmiClient
 			{
 				tscbNamespace.Plugin = this.Plugin;
 				tscbClass.Plugin = this.Plugin;
-				this.Window.Closed += Window_Closed;
-				this.Plugin.Settings.PropertyChanged += Settings_PropertyChanged;
+				this.Window.Closed += this.Window_Closed;
+				this.Plugin.Settings.PropertyChanged += this.Settings_PropertyChanged;
 				tscbNamespace.SetNamespaceText(this.Settings.Namespace);
 				this.SetCaption();
 				this.tsMain_Resize(this, EventArgs.Empty);
@@ -76,7 +76,7 @@ namespace Plugin.WmiClient
 		}
 
 		protected virtual void Window_Closed(Object sender, EventArgs e)
-			=> this.Plugin.Settings.PropertyChanged -= Settings_PropertyChanged;
+			=> this.Plugin.Settings.PropertyChanged -= this.Settings_PropertyChanged;
 
 		protected virtual void Settings_PropertyChanged(Object sender, PropertyChangedEventArgs e)
 		{
@@ -176,7 +176,6 @@ namespace Plugin.WmiClient
 			case PluginSettings.TemplateCode.CS:
 				defaultExtension = "bat";
 				break;
-			case PluginSettings.TemplateCode.PS:
 			default:
 				defaultExtension = "ps1";
 				break;

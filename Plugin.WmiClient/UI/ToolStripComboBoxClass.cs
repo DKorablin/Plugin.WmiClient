@@ -11,7 +11,7 @@ namespace Plugin.WmiClient.UI
 {
 	internal class ToolStripComboBoxClass : ToolStripComboBox
 	{
-		private class WmiClassRequest
+		private sealed class WmiClassRequest
 		{
 			public String NamespaceName { get; set; }
 			public WmiData.WmiFilterType FilterType { get; set; }
@@ -48,7 +48,7 @@ namespace Plugin.WmiClient.UI
 			if(result)
 			{
 				if(this.Plugin == null)
-					throw new ArgumentNullException("this.Plugin");
+					throw new InvalidOperationException("this.Plugin is null");
 
 				bwClassUpdate.RunWorkerAsync(new WmiClassRequest() { NamespaceName = namespaceName, FilterType = filterType, });
 			}
@@ -125,12 +125,12 @@ namespace Plugin.WmiClient.UI
 			switch(e.KeyCode)
 			{
 			case Keys.Return:
-				if(this.DroppedDown)
-					if(this._oldSelectedIndex != null && this._oldSelectedIndex != this.SelectedIndex)
-					{
-						this.DroppedDown = false;
-						e.Handled = true;
-					}
+				if(this.DroppedDown
+					&& this._oldSelectedIndex != null && this._oldSelectedIndex != this.SelectedIndex)
+				{
+					this.DroppedDown = false;
+					e.Handled = true;
+				}
 				break;
 			}
 			base.OnKeyDown(e);
@@ -141,14 +141,14 @@ namespace Plugin.WmiClient.UI
 		{
 			base.OnDropDown(e);
 
-			if(this._widthCalculated == false)
+			if(!this._widthCalculated)
 			{
 				Utils.SetDropDownListWidth(this);
 				this._widthCalculated = true;
 			}
 			this._oldSelectedIndex = this.SelectedIndex;
 
-			//Bypass double AutoComplete mode when DDL is opened and user inputing text
+			//Bypass double AutoComplete mode when DDL is opened and user inputting text
 			base.AutoCompleteMode = AutoCompleteMode.None;
 		}
 
@@ -179,7 +179,7 @@ namespace Plugin.WmiClient.UI
 
 		protected override void OnLeave(EventArgs e)
 		{
-			if(this._selectedIndexChangedRequired)//Отдаём событие на смену пространства имён только после покидания элемента управления. Иначе при каждом клике будет евент
+			if(this._selectedIndexChangedRequired)//We dispatch the namespace change event only after the control is exited. Otherwise, the event will be triggered on every click.
 				this.OnSelectedIndexChanged(EventArgs.Empty);
 
 			base.OnLeave(e);

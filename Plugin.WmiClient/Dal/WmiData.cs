@@ -43,9 +43,9 @@ namespace Plugin.WmiClient.Dal
 		public virtual void Dispose()
 		{ }
 
-		/// <summary>Получить список всех доступных пространств имён для WMI</summary>
-		/// <param name="namespaceRoot">Корневое пространство имён</param>
-		/// <returns>Массив пространств имён</returns>
+		/// <summary>Get a list of all available namespaces for WMI</summary>
+		/// <param name="namespaceRoot">Root namespace</param>
+		/// <returns>Array of namespaces</returns>
 		public IEnumerable<String> GetNamespacesRecursive(String namespaceRoot = Constant.Wmi.NamespaceRoot)
 		{
 			foreach(String namespaceName in this.GetNamespaces(namespaceRoot))
@@ -58,9 +58,9 @@ namespace Plugin.WmiClient.Dal
 			}
 		}
 
-		/// <summary>Получить список всех доступных пространств имён для WMI</summary>
-		/// <param name="namespaceRoot">Корневое пространство имён</param>
-		/// <returns>Массив пространств имён</returns>
+		/// <summary>Get a list of all available namespaces for WMI</summary>
+		/// <param name="namespaceRoot">Root namespace</param>
+		/// <returns>Array of namespaces</returns>
 		public IEnumerable<String> GetNamespaces(String namespaceRoot = Constant.Wmi.NamespaceRoot)
 		{
 			ManagementScope scope = this.GetWmiScope(namespaceRoot);
@@ -99,9 +99,9 @@ namespace Plugin.WmiClient.Dal
 			}
 		}
 
-		/// <summary>Получить массив классов, которые находятся в выбранном пространстве имён</summary>
-		/// <param name="filterType">Тип применяемого фильтра</param>
-		/// <returns>Массив классов, которые принадлежат выбранному пространству имён</returns>
+		/// <summary>Get an array of classes that are in the selected namespace</summary>
+		/// <param name="filterType">Type of filter to apply</param>
+		/// <returns>An array of classes that belong to the selected namespace</returns>
 		public IEnumerable<String> GetClasses(String namespaceName, WmiFilterType filterType)
 			=> this.GetClasses(namespaceName, WmiData.WmiFilters[filterType]);
 
@@ -170,9 +170,9 @@ namespace Plugin.WmiClient.Dal
 			return new ManagementScope(fullNamespace, this.Options);
 		}
 
-		/// <summary>Получить массив классов в выбранном пространстве имён и отфильтровать их через входящий метод</summary>
-		/// <param name="filter">Фильтр применяемый к массиву классов</param>
-		/// <returns>Массив классов в пространстве имён, которые соответствуют определённому фильтру</returns>
+		/// <summary>Get an array of classes in the selected namespace and filter them using the incoming method.</summary>
+		/// <param name="filter">Filter applied to the array of classes.</param>
+		/// <returns>An array of classes in the namespace that match the specified filter.</returns>
 		private IEnumerable<String> GetClasses(String namespaceName, Func<ManagementClass, Boolean> filter)
 		{
 			WqlEventQuery query = new WqlEventQuery(Constant.Wmi.MetaClass);
@@ -184,9 +184,9 @@ namespace Plugin.WmiClient.Dal
 			}
 		}
 
-		/// <summary>Отобрать все инстансы, которые являются поддерживаемыми классами</summary>
-		/// <param name="wmiClass">WMI класс для проверки</param>
-		/// <returns>Инстанс является поддерживаемым классом</returns>
+		/// <summary>Select all instances that are supported classes</summary>
+		/// <param name="wmiClass">WMI class to check</param>
+		/// <returns>Instance is a supported class</returns>
 		private static Boolean FilterClasses(ManagementClass wmiClass)
 		{
 			foreach(QualifierData qd in wmiClass.Qualifiers)
@@ -202,15 +202,15 @@ namespace Plugin.WmiClient.Dal
 			return false;
 		}
 
-		/// <summary>Отобрать все инстансы, которые содержат методы</summary>
-		/// <param name="wmiClass">WMI класс для проверки</param>
-		/// <returns>У класса есть методы</returns>
+		/// <summary>Select all instances that contain methods</summary>
+		/// <param name="wmiClass">WMI class to check</param>
+		/// <returns>The class has methods</returns>
 		private static Boolean FilterClassesWithMethods(ManagementClass wmiClass)
 			=> FilterClasses(wmiClass) && wmiClass.Methods.Count > 0;
 
-		/// <summary>Отобрать все инстансы, которые являются событиями</summary>
-		/// <param name="wmiClass">WMI класс для проверки</param>
-		/// <returns>Класс отправляет события</returns>
+		/// <summary>Select all instances that are events</summary>
+		/// <param name="wmiClass">WMI class to check</param>
+		/// <returns>The class dispatches events</returns>
 		private static Boolean FilterEvents(ManagementClass wmiClass)
 			=> wmiClass.Derivation.Contains("__Event");
 

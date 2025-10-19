@@ -168,9 +168,8 @@ namespace Plugin.WmiClient
 				{
 					try
 					{
-						if(item is ManagementClass)
+						if(item is ManagementClass classItem)
 						{
-							ManagementClass classItem = item as ManagementClass;
 							if(listColumns == null)
 								listColumns = new ColumnHeader[]{
 									new ColumnHeader() { Text = "__CLASS", },

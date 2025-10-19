@@ -4,13 +4,8 @@ using System.Runtime.InteropServices;
 [assembly: Guid("a23dea79-8807-4af8-93fd-878b5568ed65")]
 [assembly: System.CLSCompliant(false)]
 
-#if NETCOREAPP
-[assembly: AssemblyMetadata("ProjectUrl", "https://dkorablin.ru/")]
-#else
-
 [assembly: AssemblyDescription("Windows Management Instrumentation test engine")]
 [assembly: AssemblyCopyright("Copyright © Danila Korablin 2017-2025")]
-#endif
 
 // Writing coupled WMI providers using WMI.NET Provider Extension 2.0
 // https://msdn.microsoft.com/en-us/library/cc268228.aspx

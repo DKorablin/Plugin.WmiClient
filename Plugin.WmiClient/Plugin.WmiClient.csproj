@@ -1,0 +1,69 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net35;net8.0-windows</TargetFrameworks>
+		<UseWindowsForms>true</UseWindowsForms>
+		<OutputType>Library</OutputType>
+		<RootNamespace>Plugin.WmiClient</RootNamespace>
+		<Configuration>Debug</Configuration>
+		<Deterministic>false</Deterministic>
+		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<!--nuspec-->
+	<PropertyGroup>
+		<PackageId>AlphaOmega.SAL.Plugin.WmiClient</PackageId>
+		<Version>$(Version)</Version>
+		<Title>Windows Management Instrumentation test engine</Title>
+		<Description>A comprehensive WMI testing and exploration plugin for the SAL framework. Execute WQL queries, invoke WMI methods, monitor real-time events, browse namespaces and classes, and export operations as PowerShell or C# scripts. Supports both local and remote WMI connections with full parameter control and formatted result display. Multi-targets .NET Framework 3.5 and .NET 8.0.</Description>
+		<Authors>Danila Korablin</Authors>
+		<PackageLicenseExpression>Apache-1.0</PackageLicenseExpression>
+		<PackageReadmeFile>docs/README.md</PackageReadmeFile>
+		<PackageIcon>docs\SAL.100.png</PackageIcon>
+		<PackageProjectUrl>https://github.com/DKorablin/Plugin.WmiClient</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/DKorablin/Plugin.WmiClient</RepositoryUrl>
+		<PackageTags>SAL plugin windows WMI client WQL query event monitoring management instrumentation testing explorer</PackageTags>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\docs" />
+		<None Include="..\Images.Shared\SAL.100.png" Pack="true" PackagePath="\docs" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<Optimize>true</Optimize>
+		<PublishSingleFile>true</PublishSingleFile>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' != 'net35'">
+		<AssemblyAttributes Include="AssemblyMetadata">
+			<_Parameter1>ProjectUrl</_Parameter1>
+			<_Parameter2>https://github.com/DKorablin/Plugin.WmiClient</_Parameter2>
+		</AssemblyAttributes>
+		<AssemblyAttributes Include="System.Runtime.Versioning.SupportedOSPlatform">
+			<_Parameter1>Windows</_Parameter1>
+		</AssemblyAttributes>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SAL.Windows">
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</PackageReference>
+		<PackageReference Include="FCTB" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net35'">
+		<Reference Include="System.Management" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
+		<PackageReference Include="System.Management" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="..\WinForms.Shared\ContextMenuStripCopy.cs" Link="UI\ContextMenuStripCopy.cs" />
+		<Compile Include="..\WinForms.Shared\SortableListView.cs" Link="UI\SortableListView.cs" />
+	</ItemGroup>
+</Project>

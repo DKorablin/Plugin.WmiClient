@@ -32,10 +32,10 @@ namespace Plugin.WmiClient
 		#region Properties
 		internal static TraceSource Trace => _trace ?? (_trace = PluginWindows.CreateTraceSource<PluginWindows>());
 
-		/// <summary>Настройки для взаимодействия из хоста</summary>
+		/// <summary>Settings for interaction from the host</summary>
 		Object IPluginSettings.Settings => this.Settings;
 
-		/// <summary>Настройки для взаимодействия из плагина</summary>
+		/// <summary>Settings for interaction from the plugin</summary>
 		public PluginSettings Settings
 		{
 			get
@@ -185,7 +185,7 @@ namespace Plugin.WmiClient
 
 			if(property.Type == CimType.DateTime && property.Value is String)
 				return ManagementDateTimeConverter.ToDateTime((String)property.Value).ToString();
-			if(property.Type == CimType.UInt64 && property.IsArray == false && property.Name == "TIME_CREATED" && property.Origin == "__Event")
+			if(property.Type == CimType.UInt64 && !property.IsArray && property.Name == "TIME_CREATED" && property.Origin == "__Event")
 				return DateTime.FromFileTime((Int64)(UInt64)property.Value).ToString();
 
 			return this.FormatValue(property.Value);
@@ -230,7 +230,7 @@ namespace Plugin.WmiClient
 				default:
 					return value.ToString();
 				}
-			} else if(value is IFormattable)
+			} else if(value is IFormattable formattableValue)
 			{
 				type = type.GetRealType();//INullable<Enum>
 				if(type.IsEnum)
@@ -250,9 +250,9 @@ namespace Plugin.WmiClient
 				case TypeCode.Double:
 				case TypeCode.Decimal:
 					if(this.Settings.ShowAsHexValue)
-						return "0x" + ((IFormattable)value).ToString("X", CultureInfo.CurrentCulture);
+						return "0x" + formattableValue.ToString("X", CultureInfo.CurrentCulture);
 					else
-						return ((IFormattable)value).ToString("n0", CultureInfo.CurrentCulture);
+						return formattableValue.ToString("n0", CultureInfo.CurrentCulture);
 				default:
 					return value.ToString();
 				}

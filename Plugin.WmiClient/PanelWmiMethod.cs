@@ -156,7 +156,7 @@ namespace Plugin.WmiClient
 			listItem.Tag = String.Join(",", Array.ConvertAll(instanceRow.ToArray(), delegate(KeyValuePair<String, Object> item) { return item.Key + "='" + item.Value + "'"; }));
 			lvInstances.Items.Add(listItem);
 
-			if(lvInstances.Items.Count == 1)//При перевом элементе разворачиваю список
+			if(lvInstances.Items.Count == 1)//At the first element expanding the list
 				splitMethod.Panel1Collapsed = false;
 		}
 
@@ -203,7 +203,7 @@ namespace Plugin.WmiClient
 			{
 				if(description.Method.InParameters == null || description.Method.InParameters.Properties.Count == 0)
 				{
-					if(splitMethod.Panel1Collapsed == false)
+					if(!splitMethod.Panel1Collapsed)
 						splitMethod.Panel2Collapsed = true;//Otherwise both panels will be collapsed and will be big white space
 					gvParameters.Clear();
 				} else
@@ -242,7 +242,7 @@ namespace Plugin.WmiClient
 			}
 		}
 
-		private void bwInstances_DoWork(Object sender, System.ComponentModel.DoWorkEventArgs e)
+		private void bwInstances_DoWork(Object sender, DoWorkEventArgs e)
 		{
 			const Int32 MaxItems = 10;
 			WmiPathItem path = (WmiPathItem)e.Argument;
@@ -289,7 +289,7 @@ namespace Plugin.WmiClient
 					listItem.SubItems[header.Index].Text = row.Value == null ? "null" : row.Value.ToString();
 				}
 
-				listItem.Tag = String.Join(",", Array.ConvertAll(instanceRow, delegate(KeyValuePair<String, Object> item) { return item.Key + "='" + item.Value + "'"; }));
+				listItem.Tag = String.Join(",", Array.ConvertAll(instanceRow, item => item.Key + "='" + item.Value + "'"));
 				lvInstances.Items.Add(listItem);
 			}
 		}
@@ -327,7 +327,7 @@ namespace Plugin.WmiClient
 				return;
 
 			if(this._observer.InProgress)
-			{//Отменяем загрузку списка экземпляров WMI класса
+			{//Cancel loading of the list of WMI class instances
 				this._observer.Cancel();
 				while(this._observer.InProgress)
 				{
@@ -335,16 +335,6 @@ namespace Plugin.WmiClient
 					System.Threading.Thread.Sleep(1000);
 				}
 			}
-
-			/*if(bwInstances.IsBusy)
-			{//Отменяем загрузку списка экземпляров WMI класса
-				bwInstances.CancelAsync();
-				while(bwInstances.IsBusy)
-				{
-					Application.DoEvents();
-					System.Threading.Thread.Sleep(1000);
-				}
-			}*/
 
 			WmiDataRow[] inParameters = new WmiDataRow[gvParameters.Count];
 			for(Int32 loop = 0; loop < inParameters.Length; loop++)

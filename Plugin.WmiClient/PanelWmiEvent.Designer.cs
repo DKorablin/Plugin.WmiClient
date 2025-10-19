@@ -252,7 +252,7 @@
 			this.lvSubscribtions.TabIndex = 0;
 			this.lvSubscribtions.UseCompatibleStateImageBehavior = false;
 			this.lvSubscribtions.View = System.Windows.Forms.View.Details;
-			this.lvSubscribtions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvSubscribtions_KeyDown);
+			this.lvSubscribtions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvSubscriptions_KeyDown);
 			// 
 			// colSubscriptionDate
 			// 

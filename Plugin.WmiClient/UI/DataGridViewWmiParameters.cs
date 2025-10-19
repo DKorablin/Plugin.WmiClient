@@ -74,9 +74,9 @@ namespace Plugin.WmiClient.UI
 			return conditions.ToArray();
 		}
 
-		/// <summary>Ошибка ввода данных</summary>
-		/// <param name="sender">Таблица</param>
-		/// <param name="e">Аргументы ошибки ввода данных</param>
+		/// <summary>Data entry error</summary>
+		/// <param name="sender">Table</param>
+		/// <param name="e">Data entry error arguments</param>
 		private void gvParameters_DataError(Object sender, DataGridViewDataErrorEventArgs e)
 		{
 			Exception exc = e.Exception;
@@ -139,7 +139,7 @@ namespace Plugin.WmiClient.UI
 					else
 						this._cellPropertiesValue.CreateControl(GridViewDynamicCell.ControlType.ComboBox, data, null, null);
 					break;
-				default://Показываем элемент управления по умолчанию
+				default://Show the default control
 					e.Cancel = false;
 					break;
 				}

@@ -12,18 +12,14 @@ namespace Plugin.WmiClient.UI
 {
 	internal class ListViewWmiResult : ListView
 	{
-		private ColumnHeader _colEventName;
-		private ColumnHeader _colEventValue;
+		private readonly ColumnHeader _colEventName = new ColumnHeader() { Text = "Name", };
+		private readonly ColumnHeader _colEventValue = new ColumnHeader() { Text = "Value", };
 
 		[Browsable(false)]
 		public PluginWindows Plugin { get; set; }
 
 		public ListViewWmiResult()
-		{
-			this._colEventName = new ColumnHeader() { Text = "Name", };
-			this._colEventValue = new ColumnHeader() { Text = "Value", };
-			base.Columns.AddRange(new ColumnHeader[] { this._colEventName, this._colEventValue, });
-		}
+			=> base.Columns.AddRange(new ColumnHeader[] { this._colEventName, this._colEventValue, });
 
 		public void AddEvent(String groupName, IEnumerable<PropertyData> properties)
 		{

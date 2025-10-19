@@ -15,7 +15,7 @@ namespace Plugin.WmiClient
 {
 	internal partial class PanelWmiEvent : PanelWmiBase
 	{
-		enum SubscribtionsImageIndex
+		enum SubscriptionsImageIndex
 		{
 			Started = 0,
 			Stopped = 1,
@@ -31,7 +31,7 @@ namespace Plugin.WmiClient
 				if(this._wmiEvents == null)
 				{
 					this._wmiEvents = new WmiDataEvent();
-					this._wmiEvents.WmiEventArrived += WmiEvents_WmiEventArrived;
+					this._wmiEvents.WmiEventArrived += this.WmiEvents_WmiEventArrived;
 				}
 				return this._wmiEvents;
 			}
@@ -39,7 +39,7 @@ namespace Plugin.WmiClient
 
 		public PanelWmiEvent()
 			: base("WMI Events")
-			=> InitializeComponent();
+			=> this.InitializeComponent();
 
 		protected override void OnCreateControl()
 		{
@@ -193,9 +193,9 @@ namespace Plugin.WmiClient
 		}
 
 		private void WmiEvents_WmiEventArrived(Object sender, WmiEventArrivedEventArgs e)
-			=> lvEvents.AddEvent(String.Format("{0}\\{1}", e.Path.Path, e.NewEvent.ClassPath), e.NewEvent.Properties.Cast<PropertyData>().ToArray());
+			=> lvEvents.AddEvent($"{e.Path.Path}\\{e.NewEvent.ClassPath}", e.NewEvent.Properties.Cast<PropertyData>().ToArray());
 
-		private void lvSubscribtions_KeyDown(Object sender, KeyEventArgs e)
+		private void lvSubscriptions_KeyDown(Object sender, KeyEventArgs e)
 		{
 			switch(e.KeyData)
 			{
@@ -217,7 +217,7 @@ namespace Plugin.WmiClient
 			Boolean? isStopped = null;
 			foreach(ListViewItem item in lvSubscribtions.SelectedItems)
 			{
-				if(item.ImageIndex == (Int32)SubscribtionsImageIndex.Started)//Started
+				if(item.ImageIndex == (Int32)SubscriptionsImageIndex.Started)//Started
 				{
 					if(isStopped == null)
 						isStopped = false;
@@ -226,7 +226,7 @@ namespace Plugin.WmiClient
 						isStopped = null;
 						break;
 					}
-				} else if(item.ImageIndex == (Int32)SubscribtionsImageIndex.Stopped)//Stopped
+				} else if(item.ImageIndex == (Int32)SubscriptionsImageIndex.Stopped)//Stopped
 				{
 					if(isStopped == null)
 						isStopped = true;
@@ -257,14 +257,14 @@ namespace Plugin.WmiClient
 				{
 					String query = (String)item.Tag;
 					this.WmiEvents.StartWatcher(query);
-					item.ImageIndex = (Int32)SubscribtionsImageIndex.Started;
+					item.ImageIndex = (Int32)SubscriptionsImageIndex.Started;
 				}
 			else if(e.ClickedItem == tsmiSubscriptionsStop)
 				foreach(ListViewItem item in lvSubscribtions.SelectedItems)
 				{
 					String query = (String)item.Tag;
 					this.WmiEvents.StopWatcher(query);
-					item.ImageIndex = (Int32)SubscribtionsImageIndex.Stopped;
+					item.ImageIndex = (Int32)SubscriptionsImageIndex.Stopped;
 				}
 		}
 	}

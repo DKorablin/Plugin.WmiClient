@@ -6,7 +6,7 @@ namespace Plugin.WmiClient
 {
 	internal static class Constant
 	{
-		public class Wmi
+		public static class Wmi
 		{
 			public const String NamespaceRoot = "root";
 			public const String MetaClass = "meta_class";
@@ -21,7 +21,7 @@ namespace Plugin.WmiClient
 
 		public static class CSCode
 		{
-			/// <summary>Заголовок bat файла для динамической компиляции</summary>
+			/// <summary>BAT file header for dynamic compilation</summary>
 			public const String Compiler = @"
 /*
 @echo off && cls
@@ -139,17 +139,17 @@ private Object Method(String path, String methodName, Object[] args)
 				case TemplateType.Event:
 					template = Constant.CSCode.WMIEvent;
 					if(dto.Properties != null && dto.Properties.Length > 0)
-						props = String.Join(Environment.NewLine, Array.ConvertAll<String, String>(dto.Properties, (String item) => { return Constant.CSCode.WMIProperty.Replace("{Property}", item); }));
+						props = String.Join(Environment.NewLine, Array.ConvertAll<String, String>(dto.Properties, item => Constant.CSCode.WMIProperty.Replace("{Property}", item)));
 					break;
 				case TemplateType.Method:
 					template = Constant.CSCode.WMIMethod;
 					if(dto.Arguments != null && dto.Arguments.Length > 0)
-						args = String.Join(",", Array.ConvertAll<Object, String>(dto.Arguments, (Object item) => { return FormatString(item); }));
+						args = String.Join(",", Array.ConvertAll<Object, String>(dto.Arguments, FormatString));
 					break;
 				case TemplateType.Query:
 					template = Constant.CSCode.WMIQuery;
 					if(dto.Properties != null && dto.Properties.Length > 0)
-						props = String.Join(Environment.NewLine, Array.ConvertAll<String, String>(dto.Properties, (String item) => { return Constant.CSCode.WMIProperty.Replace("{Property}", item); }));
+						props = String.Join(Environment.NewLine, Array.ConvertAll<String, String>(dto.Properties, item => Constant.CSCode.WMIProperty.Replace("{Property}", item)));
 					break;
 				default:
 					throw new NotImplementedException();
@@ -205,12 +205,12 @@ Attach-WMIEvent";
 				case TemplateType.Event:
 					template = Constant.PSCode.WMIEvent;
 					if(dto.Properties != null && dto.Properties.Length > 0)
-						props = String.Join("," + Environment.NewLine, Array.ConvertAll<String, String>(dto.Properties, (String item) => { return Constant.PSCode.WMIEventProperty.Replace("{Property}", item); }));
+						props = String.Join("," + Environment.NewLine, Array.ConvertAll<String, String>(dto.Properties, item => Constant.PSCode.WMIEventProperty.Replace("{Property}", item)));
 					break;
 				case TemplateType.Method:
 					template = Constant.PSCode.WMIMethod;
 					if(dto.Arguments != null && dto.Arguments.Length > 0)
-						args = String.Join(",", Array.ConvertAll<Object, String>(dto.Arguments, (Object item) => { return FormatString(item); }));
+						args = String.Join(",", Array.ConvertAll<Object, String>(dto.Arguments, FormatString));
 					if(dto.Properties != null && dto.Properties.Length > 0)
 						props = String.Join(",", dto.Properties);
 					break;

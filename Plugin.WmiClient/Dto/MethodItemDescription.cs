@@ -32,9 +32,7 @@ namespace Plugin.WmiClient.Dto
 
 		public MethodItemDescription(MethodData method)
 		{
-			_ = method ?? throw new ArgumentNullException(nameof(method));
-
-			this.Method = method;
+			this.Method = method ?? throw new ArgumentNullException(nameof(method));
 			this.IsStatic = MethodItemDescription.CheckStatic(method.Qualifiers);
 
 			this.DisplayName = MethodItemDescription.FormatWmiMethod(method);
@@ -42,17 +40,13 @@ namespace Plugin.WmiClient.Dto
 
 		public MethodItemDescription(PropertyData property)
 		{
-			_ = property ?? throw new ArgumentNullException(nameof(property));
-
-			this.Property = property;
+			this.Property = property ?? throw new ArgumentNullException(nameof(property));
 			this.DisplayName = MethodItemDescription.FormatWmiProperty(property);
 		}
 
 		public MethodItemDescription(QualifierData qualifier)
 		{
-			_ = qualifier ?? throw new ArgumentNullException(nameof(qualifier));
-
-			this.Qualifier = qualifier;
+			this.Qualifier = qualifier ?? throw new ArgumentNullException(nameof(qualifier));
 			this.DisplayName = qualifier.Name;
 		}
 

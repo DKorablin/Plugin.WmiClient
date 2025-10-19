@@ -26,9 +26,8 @@ namespace Plugin.WmiClient.UI
 		{
 			try
 			{
-				if(item is ManagementClass)
+				if(item is ManagementClass classItem)
 				{
-					ManagementClass classItem = item as ManagementClass;
 					if(base.Columns.Count == 0)
 						base.Columns.AddRange(new ColumnHeader[]{
 									new ColumnHeader() { Text = "__CLASS", },

@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Reflection;
-using System.Collections.Generic;
+using System.Text;
+using System.Windows.Forms;
+using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace Plugin.WmiClient.UI
 {
@@ -18,11 +19,11 @@ namespace Plugin.WmiClient.UI
 			ListView = 6,
 		}
 
-		private ToolStripDropDown tsdd;
+		private readonly ToolStripDropDown tsdd;
 		private Boolean _dropDownClosed;
 		private Object _formattedValue;
 		private ToolStripControlHost tbh;
-		private DataGridView _gridView;
+		private readonly DataGridView _gridView;
 
 		public GridViewDynamicCell(DataGridView gridView)
 		{
@@ -37,10 +38,10 @@ namespace Plugin.WmiClient.UI
 			tsdd.Closing += new ToolStripDropDownClosingEventHandler(tsdd_Closing);
 		}
 
-		/// <summary>Получить значение свойства из объекта</summary>
-		/// <param name="item">Объект из которого необходимо получить свойство</param>
-		/// <param name="propertyName">Наименование свойства значение которого необходимо получить из объекта. Если свойство не задано, то возвращается исходный объект</param>
-		/// <returns>Значение свойства</returns>
+		/// <summary>Get a property value from an object</summary>
+		/// <param name="item">The object from which to get the property</param>
+		/// <param name="propertyName">The name of the property whose value to get from the object. If the property is not specified, the original object is returned.</param>
+		/// <returns>The property value</returns>
 		private static Object GetPropertyValue(Object item, String propertyName)
 			=> propertyName == null
 				? item
@@ -74,8 +75,8 @@ namespace Plugin.WmiClient.UI
 			case ControlType.MonthCalendar:
 				MonthCalendar cal = new MonthCalendar();
 				cal.DateSelected += new DateRangeEventHandler(cal_DateSelected);
-				if(selectedValue is DateTime)
-					cal.SetDate((DateTime)selectedValue);
+				if(selectedValue is DateTime selectedDateTime)
+					cal.SetDate(selectedDateTime);
 
 				this.ShowControl(cal, cal.Size);
 				break;
@@ -97,17 +98,17 @@ namespace Plugin.WmiClient.UI
 
 				foreach(Object item in values)
 				{
-					String displayText = String.Empty;
+					StringBuilder displayText = new StringBuilder();
 					if(displayMember.Contains(";"))
 					{
 						String[] dispProperties = displayMember.Split(new Char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 						foreach(String dispProperty in dispProperties)
-							displayText += " " + GridViewDynamicCell.GetPropertyValue(item, dispProperty).ToString();
+							displayText.Append(" " + GridViewDynamicCell.GetPropertyValue(item, dispProperty).ToString());
 					} else
-						displayText = GridViewDynamicCell.GetPropertyValue(item, displayMember).ToString();
+						displayText.Append(GridViewDynamicCell.GetPropertyValue(item, displayMember).ToString());
 
 					Object value = GridViewDynamicCell.GetPropertyValue(item, valueMember);
-					ListViewItem lvItem = lv.Items.Add(new ListViewItem(displayText) { Tag = value, });
+					ListViewItem lvItem = lv.Items.Add(new ListViewItem(displayText.ToString()) { Tag = value, });
 
 					if(selectedValue != null && selectedValue.Equals(value))
 					{
@@ -126,7 +127,7 @@ namespace Plugin.WmiClient.UI
 				this.ShowControl(lv, new Size(width, height));
 				break;
 			default:
-				throw new NotImplementedException(String.Format("ControlType: {0}; Values: {1}; DisplayMember: {2}; ValueMember: {3};", ctrl, values, displayMember, valueMember));
+				throw new NotImplementedException($"ControlType: {ctrl}; Values: {values}; DisplayMember: {displayMember}; ValueMember: {valueMember};");
 			}
 		}
 
@@ -193,8 +194,7 @@ namespace Plugin.WmiClient.UI
 		private void tsdd_Opened(Object sender, EventArgs e)
 		{
 			tbh.Focus();
-			ComboBox cb = tbh.Control as ComboBox;
-			if(cb != null)
+			if(tbh.Control is ComboBox cb)
 				cb.DroppedDown = true;
 		}
 
@@ -202,16 +202,15 @@ namespace Plugin.WmiClient.UI
 		{
 			if(tbh.Control is TextBox)
 				this._formattedValue = tsdd.Items[0].Text;
-			else if(tbh.Control is NumericUpDown)
-				this._formattedValue = (Byte)((NumericUpDown)tbh.Control).Value;
-			else if(tbh.Control is ComboBox)
+			else if(tbh.Control is NumericUpDown ctlUd)
+				this._formattedValue = (Byte)ctlUd.Value;
+			else if(tbh.Control is ComboBox ctlCb)
 			{
-				ComboBox cb = (ComboBox)tbh.Control;
-				Object item = cb.SelectedItem;
+				Object item = ctlCb.SelectedItem;
 				if(item != null)
-					this._formattedValue = cb.ValueMember.Length == 0
+					this._formattedValue = ctlCb.ValueMember.Length == 0
 						? item
-						: cb.SelectedItem.GetType().InvokeMember(cb.ValueMember, BindingFlags.GetProperty | BindingFlags.ExactBinding, null, item, null);
+						: ctlCb.SelectedItem.GetType().InvokeMember(ctlCb.ValueMember, BindingFlags.GetProperty | BindingFlags.ExactBinding, null, item, null);
 			}
 			this._dropDownClosed = true;
 		}

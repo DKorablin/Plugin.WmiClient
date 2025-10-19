@@ -24,14 +24,14 @@ namespace Plugin.WmiClient
 			Qualifier = 5,
 		}
 
-		private ListViewGroup lvgDefMethod = new ListViewGroup("Methods");
-		private ListViewGroup lvgDefProperty = new ListViewGroup("Properties");
-		private ListViewGroup lvgDefQualifier = new ListViewGroup("Qualifiers");
+		private readonly ListViewGroup lvgDefMethod = new ListViewGroup("Methods");
+		private readonly ListViewGroup lvgDefProperty = new ListViewGroup("Properties");
+		private readonly ListViewGroup lvgDefQualifier = new ListViewGroup("Qualifiers");
 
 		public PanelWmiDescription()
 			: base("WMI Description")
 		{
-			InitializeComponent();
+			this.InitializeComponent();
 			lvDefinitions.Groups.AddRange(new ListViewGroup[] { lvgDefMethod, lvgDefProperty, lvgDefQualifier, });
 		}
 
@@ -79,12 +79,12 @@ namespace Plugin.WmiClient
 			using(WmiDataClass wmi = new WmiDataClass(path, this.Plugin.Settings.ExecutionTimeout, this.Plugin.Settings.GetConnectionOptions()))
 				if(item == null)
 					data = wmi.GetClassDescription();
-				else if(item is MethodData)
-					data = wmi.GetMethodDescription((MethodData)item);
-				else if(item is PropertyData)
-					data = wmi.GetPropertyDescription((PropertyData)item);
-				else if(item is QualifierData)
-					data = wmi.GetQualifierDescription((QualifierData)item).ToArray();
+				else if(item is MethodData mItem)
+					data = wmi.GetMethodDescription(mItem);
+				else if(item is PropertyData pItem)
+					data = wmi.GetPropertyDescription(pItem);
+				else if(item is QualifierData qItem)
+					data = wmi.GetQualifierDescription(qItem).ToArray();
 				else throw new NotImplementedException();
 
 			txtDescription.Text = data == null

@@ -12,7 +12,7 @@ namespace Plugin.WmiClient.UI
 	internal class ToolStripComboBoxNamespace : ToolStripComboBox
 	{
 		private static Dictionary<String, String[]> NamespaceCache = new Dictionary<String, String[]>();
-		private static Object NamespaceCacheLock = new Object();
+		private static readonly Object NamespaceCacheLock = new Object();
 		private BackgroundWorker bwNamespaceUpdate;
 		private Boolean _namespaceChanged = false;
 
@@ -61,7 +61,7 @@ namespace Plugin.WmiClient.UI
 		{
 			base.Items.Clear();
 			base.Text = String.Empty;
-			base.DropDown += ToolStripComboBoxNamespace_DropDown;//Attach event to load namespaces on next update
+			base.DropDown += this.ToolStripComboBoxNamespace_DropDown;//Attach event to load namespaces on next update
 		}
 
 		private void InitializeComponent()
@@ -110,7 +110,7 @@ namespace Plugin.WmiClient.UI
 				{
 					PluginWindows.Trace.TraceData(TraceEventType.Error, 10, e.Error);
 					base.DroppedDown = false;
-					base.DropDown += ToolStripComboBoxNamespace_DropDown;//Trying to update namespaces in the next time
+					base.DropDown += this.ToolStripComboBoxNamespace_DropDown;//Trying to update namespaces in the next time
 				} else
 				{
 					String[] namespaces = (String[])e.Result;
@@ -136,7 +136,7 @@ namespace Plugin.WmiClient.UI
 			//Bypass double AutoComplete mode
 			//base.AutoCompleteMode = AutoCompleteMode.None;
 
-			base.DropDown -= ToolStripComboBoxNamespace_DropDown;
+			base.DropDown -= this.ToolStripComboBoxNamespace_DropDown;
 		}
 
 		private void ToolStripComboBoxNamespace_DropDownClosed(Object sender, EventArgs e)
@@ -155,7 +155,7 @@ namespace Plugin.WmiClient.UI
 
 		private void ToolStripComboBoxNamespace_Leave(Object sender, EventArgs e)
 		{
-			if(this._namespaceChanged)//Отдаём событие на смену пространства имён только после покидания элемента управления. Иначе при каждом клике будет евент
+			if(this._namespaceChanged)//We dispatch the namespace change event only after the control is exited. Otherwise, the event will be triggered on every click.
 				base.OnSelectedIndexChanged(EventArgs.Empty);
 		}
 	}
