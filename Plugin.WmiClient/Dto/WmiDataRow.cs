@@ -6,26 +6,33 @@ using System.Reflection;
 
 namespace Plugin.WmiClient.Dal
 {
-	/// <summary>Данные для подписывание на WMI событие</summary>
+	/// <summary>Represents a WMI data row for event subscription and parameter handling</summary>
 	internal class WmiDataRow
 	{
-		/// <summary>Знак операции</summary>
+		/// <summary>Operation sign types for WQL queries</summary>
 		public enum QuerySignType
 		{
-
+			/// <summary>Equals operator (=)</summary>
 			Equal,
+			/// <summary>Not equals operator (&lt;&gt;)</summary>
 			NotEqual,
+			/// <summary>Greater than operator (&gt;)</summary>
 			More,
+			/// <summary>Greater than or equal operator (&gt;=)</summary>
 			MoreEqual,
+			/// <summary>Less than operator (&lt;)</summary>
 			Less,
+			/// <summary>Less than or equal operator (&lt;=)</summary>
 			LessEqual,
+			/// <summary>LIKE operator for pattern matching</summary>
 			Like,
+			/// <summary>ISA operator for type checking</summary>
 			ISA,
 		}
 
 		private Object _value;
 
-		/// <summary>Маппинг знаков равенства на строковое представление (Используется в таблице с событиями)</summary>
+		/// <summary>Maps equality signs to their string representation (Used in the events table)</summary>
 		public static KeyValuePair<String, QuerySignType>[] Signs = new KeyValuePair<String, QuerySignType>[]
 		{
 			new KeyValuePair<String,QuerySignType>("=", QuerySignType.Equal),
@@ -38,28 +45,29 @@ namespace Plugin.WmiClient.Dal
 			new KeyValuePair<String,QuerySignType>("ISA",QuerySignType.ISA),
 		};
 
-		/// <summary>Тип объекта со стороны WMI</summary>
+		/// <summary>Gets or sets the WMI object type (CIM type)</summary>
 		public CimType Type { get; set; }
 
-		/// <summary>Тип объекта со стороны WMI + features</summary>
+		/// <summary>Gets the WMI object type name with array notation if applicable</summary>
 		public String TypeName
 			=> this.IsArray
 				? this.Type.ToString() + "[]"
 				: this.Type.ToString();
 
-		/// <summary>Родитель свойства</summary>
+		/// <summary>Gets or sets the origin (parent) of the property</summary>
 		public String Origin { get; set; }
 
-		/// <summary>Наименование фильтра</summary>
+		/// <summary>Gets or sets the filter name</summary>
 		public String Name { get; set; }
 
-		/// <summary>Знак операции</summary>
+		/// <summary>Gets or sets the operation sign for the query</summary>
 		public QuerySignType Sign { get; set; }
 
-		/// <summary>Массив значений</summary>
+		/// <summary>Gets or sets whether the value is an array</summary>
 		public Boolean IsArray { get; set; }
 
-		/// <summary>Пользовательское значение</summary>
+		/// <summary>Gets or sets the user-defined value with type validation</summary>
+		/// <exception cref="FormatException">Thrown when the value cannot be converted to the required type</exception>
 		public Object Value
 		{
 			get => this._value;
@@ -89,7 +97,7 @@ namespace Plugin.WmiClient.Dal
 					value = ParseToType<Int64>(value);
 					break;
 				case CimType.SInt8:
-				case CimType.UInt8://TODO: Проверить
+				case CimType.UInt8://TODO: Verify
 					value = ParseToType<Byte>(value);
 					break;
 				case CimType.UInt16:
@@ -107,6 +115,11 @@ namespace Plugin.WmiClient.Dal
 			}
 		}
 
+		/// <summary>Parses a value to a specified type with proper error handling</summary>
+		/// <typeparam name="T">Target type to parse to</typeparam>
+		/// <param name="value">Value to parse</param>
+		/// <returns>Parsed value of type T</returns>
+		/// <exception cref="FormatException">Thrown when the value cannot be parsed to the target type</exception>
 		private static Object ParseToType<T>(Object value)
 		{
 			if(value == null)
@@ -130,6 +143,8 @@ namespace Plugin.WmiClient.Dal
 			}
 		}
 
+		/// <summary>Initializes a new instance of WmiDataRow from PropertyData</summary>
+		/// <param name="item">PropertyData instance to initialize from</param>
 		public WmiDataRow(PropertyData item)
 		{
 			this.Type = item.Type;
@@ -149,13 +164,20 @@ namespace Plugin.WmiClient.Dal
 			}
 		}
 
-		public WmiDataRow(PropertyData item,String prefix)
-			:this(item)
+		/// <summary>Initializes a new instance of WmiDataRow from PropertyData with a prefix</summary>
+		/// <param name="item">PropertyData instance to initialize from</param>
+		/// <param name="prefix">Prefix to add to the property name</param>
+		public WmiDataRow(PropertyData item, String prefix)
+			: this(item)
 			=> this.Name = prefix + "." + this.Name;
 
+		/// <summary>Gets the WQL operator sign as string</summary>
+		/// <returns>String representation of the current query sign</returns>
 		public String GetWqlSign()
 			=> WmiDataRow.Signs.First(p => p.Value == this.Sign).Key;
 
+		/// <summary>Formats the condition for WQL query</summary>
+		/// <returns>Formatted WQL condition string or null if value is not set</returns>
 		public String GetFormattedCondition()
 		{
 			if(this.Value == null)

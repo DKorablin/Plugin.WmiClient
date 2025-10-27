@@ -14,7 +14,8 @@ namespace Plugin.WmiClient.Dal
 
 		/// <summary>Observer is cancelled and pending disposing</summary>
 		public Boolean IsCancelled { get; private set; }
-		/// <summary>Observer is in progress recieving new events</summary>
+
+		/// <summary>Observer is in progress receiving new events</summary>
 		public Boolean InProgress { get; private set; }
 
 		public void Cancel()
@@ -38,8 +39,8 @@ namespace Plugin.WmiClient.Dal
 		private void CreateObserver()
 		{
 			this._observer = new ManagementOperationObserver();
-			this._observer.Completed += Observer_Completed;
-			this._observer.ObjectReady += Observer_ObjectReady;
+			this._observer.Completed += this.Observer_Completed;
+			this._observer.ObjectReady += this.Observer_ObjectReady;
 			this.IsCancelled = false;
 			this.InProgress = true;
 		}
@@ -49,8 +50,8 @@ namespace Plugin.WmiClient.Dal
 			ManagementOperationObserver observer = Interlocked.Exchange(ref this._observer, null);
 			if(observer != null)
 			{
-				observer.Completed -= Observer_Completed;
-				observer.ObjectReady -= Observer_ObjectReady;
+				observer.Completed -= this.Observer_Completed;
+				observer.ObjectReady -= this.Observer_ObjectReady;
 				if(this.IsCancelled)
 				{
 					observer.Cancel();

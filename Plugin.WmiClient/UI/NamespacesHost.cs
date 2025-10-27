@@ -12,8 +12,8 @@ namespace Plugin.WmiClient.UI
 		public NamespacesHost()
 			: base(NamespacesHost.CreateControl())
 		{
-			this.Control.BeforeExpand += this.Control_BeforeExpand;
-			this.Control.NodeMouseClick += this.Control_NodeMouseClick;
+			this.Control.BeforeExpand += (sender, e) => throw new NotImplementedException();
+			this.Control.NodeMouseClick += (sender, e) => throw new NotImplementedException();
 		}
 
 		private static TreeView CreateControl()
@@ -31,11 +31,5 @@ namespace Plugin.WmiClient.UI
 
 			return result;
 		}
-
-		private void Control_BeforeExpand(Object sender, TreeViewCancelEventArgs e)
-			=> throw new NotImplementedException();
-
-		private void Control_NodeMouseClick(Object sender, TreeNodeMouseClickEventArgs e)
-			=> throw new NotImplementedException();
 	}
 }

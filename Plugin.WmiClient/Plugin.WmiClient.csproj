@@ -9,6 +9,8 @@
 		<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<CopyLocalLockFileAssemblies>True</CopyLocalLockFileAssemblies>
+		<NoWarn>CA1416</NoWarn>
 	</PropertyGroup>
 
 	<!--nuspec-->
@@ -66,4 +68,12 @@
 		<Compile Include="..\WinForms.Shared\ContextMenuStripCopy.cs" Link="UI\ContextMenuStripCopy.cs" />
 		<Compile Include="..\WinForms.Shared\SortableListView.cs" Link="UI\SortableListView.cs" />
 	</ItemGroup>
+
+	<!-- Exclude shared assemblies from copy to the output build -->
+	<Target Name="ExcludeSystemAssemblies" AfterTargets="ResolveReferences">
+		<ItemGroup>
+			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="$([System.String]::Copy('%(Filename)').StartsWith('System.'))" />
+			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="$([System.String]::Copy('%(Filename)').StartsWith('Microsoft.Win32.'))" />
+		</ItemGroup>
+	</Target>
 </Project>

@@ -1,17 +1,22 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management;
-using System.Text;
 using System.Threading;
 using Plugin.WmiClient.Dto;
 
 namespace Plugin.WmiClient.Dal
 {
+	/// <summary>Represents a WMI class and provides access to its methods, properties, and qualifiers</summary>
 	internal class WmiDataClass : WmiData
 	{
 		private ManagementObject _wmiCache;
 
+		/// <summary>Initializes a new instance of the WmiDataClass</summary>
+		/// <param name="path">WMI path containing namespace and class information</param>
+		/// <param name="executionTimeout">Timeout for WMI operations</param>
+		/// <param name="options">Connection options for WMI</param>
+		/// <exception cref="ArgumentNullException">Thrown when path.NamespaceName or path.ClassName is null or empty</exception>
 		public WmiDataClass(WmiPathItem path, TimeSpan executionTimeout, ConnectionOptions options)
 			: base(path, executionTimeout, options)
 		{
@@ -21,6 +26,9 @@ namespace Plugin.WmiClient.Dal
 				throw new ArgumentNullException(nameof(path), "path.ClassName");
 		}
 
+		/// <summary>Gets or creates a cached WMI object instance</summary>
+		/// <typeparam name="T">Type of ManagementObject to return</typeparam>
+		/// <returns>Cached WMI object instance</returns>
 		private T GetWmiObject<T>() where T : ManagementObject
 		{
 			if(this._wmiCache == null)
@@ -36,8 +44,8 @@ namespace Plugin.WmiClient.Dal
 			return (T)this._wmiCache;
 		}
 
-		/// <summary>Получить описание (Methods, Properties and Qualifiers) WMI класса</summary>
-		/// <returns>Детальная информация о классе</returns>
+		/// <summary>Get WMI class description (Methods, Properties and Qualifiers)</summary>
+		/// <returns>Detailed class information</returns>
 		public ClassItemDescription GetClassDetails()
 			=> new ClassItemDescription()
 			{
@@ -46,8 +54,8 @@ namespace Plugin.WmiClient.Dal
 				Qualifiers = this.GetQualifiers().OrderBy(p => p.Name).ToArray(),
 			};
 
-		/// <summary>Получить описание класса</summary>
-		/// <returns>Описание класса</returns>
+		/// <summary>Get class description</summary>
+		/// <returns>Array of key-value pairs containing class description details</returns>
 		public KeyValuePair<String, Object>[] GetClassDescription()
 		{
 			List<KeyValuePair<String, Object>> result = new List<KeyValuePair<String, Object>>();
@@ -71,6 +79,9 @@ namespace Plugin.WmiClient.Dal
 			return result.ToArray();
 		}
 
+		/// <summary>Gets the description of a WMI property</summary>
+		/// <param name="property">Property to get description for</param>
+		/// <returns>Array of key-value pairs containing property description details</returns>
 		public KeyValuePair<String, Object>[] GetPropertyDescription(PropertyData property)
 		{
 			List<KeyValuePair<String, Object>> result = new List<KeyValuePair<String, Object>>();
@@ -93,6 +104,9 @@ namespace Plugin.WmiClient.Dal
 			return result.ToArray();
 		}
 
+		/// <summary>Gets the description of a WMI qualifier</summary>
+		/// <param name="qualifier">Qualifier to get description for</param>
+		/// <returns>Collection of key-value pairs containing qualifier properties</returns>
 		public IEnumerable<KeyValuePair<String, Object>> GetQualifierDescription(QualifierData qualifier)
 		{
 			yield return new KeyValuePair<String, Object>("IsAmended", qualifier.IsAmended);
@@ -104,10 +118,8 @@ namespace Plugin.WmiClient.Dal
 				yield return new KeyValuePair<String, Object>("Value", qualifier.Value);
 		}
 
-		/// <summary>Получить свойства WMI класса</summary>
-		/// <param name="namespaceName">Пространство имён, где находится класс</param>
-		/// <param name="className">Наименование класса</param>
-		/// <returns>Получить все свойства класса</returns>
+		/// <summary>Get WMI class properties</summary>
+		/// <returns>Get all properties of a class</returns>
 		public IEnumerable<PropertyData> GetProperties()
 		{
 			ManagementObject obj = this.GetWmiObject<ManagementObject>();
@@ -115,6 +127,9 @@ namespace Plugin.WmiClient.Dal
 				yield return property;
 		}
 
+		/// <summary>Gets a specific property by name</summary>
+		/// <param name="propertyName">Name of the property to retrieve</param>
+		/// <returns>Property data if found, null otherwise</returns>
 		public PropertyData GetProperty(String propertyName)
 		{
 			foreach(PropertyData property in this.GetWmiObject<ManagementObject>().Properties)
@@ -124,14 +139,17 @@ namespace Plugin.WmiClient.Dal
 			return null;
 		}
 
-		/// <summary>Получить методы WMI класса</summary>
-		/// <returns>Все методы выбранного класса</returns>
+		/// <summary>Get WMI class methods</summary>
+		/// <returns>All methods of the selected class</returns>
 		public IEnumerable<MethodData> GetMethods()
 		{
 			foreach(MethodData method in this.GetWmiObject<ManagementClass>().Methods)
 				yield return method;
 		}
 
+		/// <summary>Gets a specific method by name</summary>
+		/// <param name="methodName">Name of the method to retrieve</param>
+		/// <returns>Method data if found, null otherwise</returns>
 		private MethodData GetMethod(String methodName)
 		{
 			foreach(MethodData method in this.GetWmiObject<ManagementClass>().Methods)
@@ -141,12 +159,17 @@ namespace Plugin.WmiClient.Dal
 			return null;
 		}
 
+		/// <summary>Gets all qualifiers of the WMI class</summary>
+		/// <returns>Collection of qualifier data</returns>
 		public IEnumerable<QualifierData> GetQualifiers()
 		{
 			foreach(QualifierData qualifier in this.GetWmiObject<ManagementObject>().Qualifiers)
 				yield return qualifier;
 		}
 
+		/// <summary>Gets the description of a WMI method</summary>
+		/// <param name="method">Method to get description for</param>
+		/// <returns>Array of key-value pairs containing method description details</returns>
 		public KeyValuePair<String, Object>[] GetMethodDescription(MethodData method)
 		{
 			List<KeyValuePair<String, Object>> result = new List<KeyValuePair<String, Object>>();
@@ -179,8 +202,8 @@ namespace Plugin.WmiClient.Dal
 			return result.ToArray();
 		}
 
-		/// <summary>Проверка события на соответствие внешнему событию</summary>
-		/// <returns>Таблица является внешней</returns>
+		/// <summary>Check if the event corresponds to an extrinsic event</summary>
+		/// <returns>True if the event is extrinsic, false otherwise</returns>
 		public Boolean IsExtrinsicEvent()
 		{
 			PropertyData property = this.GetWmiObject<ManagementObject>().SystemProperties["__DERIVATION"];
@@ -196,7 +219,7 @@ namespace Plugin.WmiClient.Dal
 		}
 
 		/// <summary>This object created as Singleton. It don't have any instances</summary>
-		/// <returns>Returns true if objec is singelton</returns>
+		/// <returns>Returns true if object is singleton</returns>
 		public Boolean IsSingleton()
 		{
 			ManagementObject obj = this.GetWmiObject<ManagementObject>();
@@ -213,8 +236,8 @@ namespace Plugin.WmiClient.Dal
 		{
 			if(this.IsSingleton())
 			{
-				ManagementObject singelton = this.GetWmiObject<ManagementClass>().GetInstances().Cast<ManagementObject>().Single();
-				return singelton.GetPropertyValue(name);
+				ManagementObject singleton = this.GetWmiObject<ManagementClass>().GetInstances().Cast<ManagementObject>().Single();
+				return singleton.GetPropertyValue(name);
 			}else
 				return this.GetWmiObject<ManagementObject>().GetPropertyValue(name);
 		}
@@ -235,10 +258,10 @@ namespace Plugin.WmiClient.Dal
 			return this.GetWmiObject<ManagementObject>().InvokeMethod(methodName, values);
 		}
 
-		/// <summary>Выполнить WMI метод</summary>
-		/// <param name="namespaceName">Наименование пространства имён, где находится метод</param>
-		/// <param name="methodName">Наименование метода</param>
-		/// <param name="inParams">Массив входящих параметров</param>
+		/// <summary>Invoke WMI method with parameters</summary>
+		/// <param name="methodName">Name of the method to invoke</param>
+		/// <param name="inParams">Array of input parameters</param>
+		/// <returns>Collection of output parameters from the method</returns>
 		public IEnumerable<PropertyData> InvokeMethod(String methodName, params WmiDataRow[] inParams)
 		{//\\\\MyServer\\root\\MyApp:MyClass.Key='abc'
 			//TODO:root\CIMV2\Win32_ClusterShare\GetAccessMask
@@ -256,10 +279,8 @@ namespace Plugin.WmiClient.Dal
 					yield return outProperty;
 		}
 
-		/// <summary>Получить все экземпляры объекта, которые находятся в выбранном классе</summary>
-		/// <param name="namespaceName">Пространство имён к которому принадлежит класс, экземпляры объекта которого необходимо получить</param>
-		/// <param name="className">Наименование класса, экземпляры которого необходимо получить</param>
-		/// <returns>Массив экземпляров объекта выбранного класса</returns>
+		/// <summary>Get all object instances that are in the selected class</summary>
+		/// <returns>An array of object instances of the selected class</returns>
 		public IEnumerable<KeyValuePair<String, Object>[]> GetMethodInstances()
 		{
 			if(this.IsSingleton())
@@ -282,20 +303,19 @@ namespace Plugin.WmiClient.Dal
 			}
 		}
 
-		/// <summary>Получить все экземпляры объекта, которые находятся в выбранном классе</summary>
-		/// <param name="namespaceName">Пространство имён к которому принадлежит класс, экземпляры объекта которого необходимо получить</param>
-		/// <param name="className">Наименование класса, экземпляры которого необходимо получить</param>
-		/// <returns>Массив экземпляров объекта выбранного класса</returns>
+		/// <summary>Get all object instances that are in the selected class using an observer</summary>
+		/// <param name="observer">Observer to receive instance notifications</param>
 		public void GetMethodInstances(WmiObserver observer)
 		{
 			if(this.IsSingleton())
 				return;
 
 			EnumerationOptions options = new EnumerationOptions() { Timeout = this.ExecutionTimeout, };
-			ManagementClass mclass = this.GetWmiObject<ManagementClass>();
-			mclass.GetInstances(observer.GetObserver(), options);
+			ManagementClass mClass = this.GetWmiObject<ManagementClass>();
+			mClass.GetInstances(observer.GetObserver(), options);
 		}
 
+		/// <summary>Disposes of the managed resources used by this class</summary>
 		public override void Dispose()
 		{
 			ManagementObject instance = Interlocked.Exchange(ref this._wmiCache, null);
