@@ -171,7 +171,7 @@ Settings can be configured through the plugin's settings panel in the SAL host a
 
 This plugin supports multi-targeting:
 
-- **.NET Framework 3.5** (`net35`) - Legacy support
+- **.NET Framework 4.8** (`net48`) - Legacy support
 - **.NET 8.0** (`net8.0-windows`) - Modern .NET support
 
 The project automatically selects the appropriate System.Management reference based on the target framework.

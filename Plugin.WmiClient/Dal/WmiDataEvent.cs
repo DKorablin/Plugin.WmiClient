@@ -56,7 +56,7 @@ namespace Plugin.WmiClient.Dal
 
 			this._events.Add(watcher);
 
-			PluginWindows.Trace.TraceInformation("WMI event attached: {0}", query.QueryString);
+			PluginWindows.Trace.TraceEvent(TraceEventType.Information, 0, "WMI event attached: {0}", query.QueryString);
 		}
 
 		/// <summary>Stops monitoring for a specific WQL event query</summary>
@@ -93,7 +93,7 @@ namespace Plugin.WmiClient.Dal
 			watcher.Stop();
 			watcher.Dispose();
 
-			PluginWindows.Trace.TraceInformation("WMI event detached: {0}", query);
+			PluginWindows.Trace.TraceEvent(TraceEventType.Information, 0, "WMI event detached: {0}", query);
 		}
 
 		/// <summary>Removes all WQL event subscriptions and cleans up resources</summary>

@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 [assembly: System.CLSCompliant(false)]
 
 [assembly: AssemblyDescription("Windows Management Instrumentation test engine")]
-[assembly: AssemblyCopyright("Copyright © Danila Korablin 2017-2025")]
 
 // Writing coupled WMI providers using WMI.NET Provider Extension 2.0
 // https://msdn.microsoft.com/en-us/library/cc268228.aspx

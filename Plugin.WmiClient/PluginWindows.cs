@@ -15,8 +15,6 @@ namespace Plugin.WmiClient
 {
 	public class PluginWindows : IPlugin, IPluginSettings<PluginSettings>
 	{
-		#region Fields
-		private static TraceSource _trace;
 		private readonly IHostWindows _hostWindows;
 		private PluginSettings _settings;
 		private Dictionary<String, DockState> _documentTypes;
@@ -27,10 +25,8 @@ namespace Plugin.WmiClient
 		private IMenuItem _wmiEventMenu;
 		private IMenuItem _wmiMethodMenu;
 		private IMenuItem _wmiDescriptionMenu;
-		#endregion Fields
 
-		#region Properties
-		internal static TraceSource Trace => _trace ?? (_trace = PluginWindows.CreateTraceSource<PluginWindows>());
+		internal static ITraceSource Trace { get; private set; }
 
 		/// <summary>Settings for interaction from the host</summary>
 		Object IPluginSettings.Settings => this.Settings;
@@ -64,10 +60,12 @@ namespace Plugin.WmiClient
 				return this._documentTypes;
 			}
 		}
-		#endregion Properties
 
-		public PluginWindows(IHostWindows hostWindows)
-			=> this._hostWindows = hostWindows ?? throw new ArgumentNullException(nameof(hostWindows));
+		public PluginWindows(IHostWindows hostWindows, ITraceSource trace)
+		{
+			this._hostWindows = hostWindows ?? throw new ArgumentNullException(nameof(hostWindows));
+			PluginWindows.Trace = trace ?? throw new ArgumentNullException(nameof(trace));
+		}
 
 		public IWindow GetPluginControl(String typeName, Object args)
 		{
@@ -143,15 +141,6 @@ namespace Plugin.WmiClient
 			=> this.DocumentTypes.TryGetValue(typeName, out DockState state)
 				? this._hostWindows.Windows.CreateWindow(this, typeName, searchForOpened, state, args)
 				: null;
-
-		private static TraceSource CreateTraceSource<T>(String name = null) where T : IPlugin
-		{
-			TraceSource result = new TraceSource(typeof(T).Assembly.GetName().Name + name);
-			result.Switch.Level = SourceLevels.All;
-			result.Listeners.Remove("Default");
-			result.Listeners.AddRange(System.Diagnostics.Trace.Listeners);
-			return result;
-		}
 
 		internal WmiDataClass CreateWmiDataClass(WmiPathItem path)
 			=> this.CreateWmiDataClass(path, path.ClassName);
