@@ -19,7 +19,7 @@ namespace Plugin.WmiClient
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		protected PluginWindows Plugin => (PluginWindows)this.Window.Plugin;
+		protected PluginWindows Plugin => (PluginWindows)this.Window.Plugin.Instance;
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]

@@ -94,22 +94,22 @@ namespace Plugin.WmiClient
 
 			this._wmiQueryMenu = this._menuWmi.Create("WQL &Query");
 			this._wmiQueryMenu.Name = "Tools.Test.Wmi.WmiQuery";
-			this._wmiQueryMenu.Click += (sender, e) => { this.CreateWindow(typeof(PanelWqlQuery).ToString(), false); };
+			this._wmiQueryMenu.Click += (sender, e) => this.CreateWindow(typeof(PanelWqlQuery).ToString(), false);
 			this._menuWmi.Items.Add(this._wmiQueryMenu);
 
 			this._wmiMethodMenu = this._menuWmi.Create("WMI &Method");
 			this._wmiMethodMenu.Name = "tools.Test.Wmi.WmiMethod";
-			this._wmiMethodMenu.Click += (sender, e) => { this.CreateWindow(typeof(PanelWmiMethod).ToString(), true); };
+			this._wmiMethodMenu.Click += (sender, e) => this.CreateWindow(typeof(PanelWmiMethod).ToString(), true);
 			this._menuWmi.Items.Add(this._wmiMethodMenu);
 
 			this._wmiEventMenu = this._menuWmi.Create("WMI &Event");
 			this._wmiEventMenu.Name = "Tools.Test.Wmi.WmiEvent";
-			this._wmiEventMenu.Click += (sender, e) => { this.CreateWindow(typeof(PanelWmiEvent).ToString(), true); };
+			this._wmiEventMenu.Click += (sender, e) => this.CreateWindow(typeof(PanelWmiEvent).ToString(), true);
 			this._menuWmi.Items.Add(this._wmiEventMenu);
 
 			this._wmiDescriptionMenu = this._menuWmi.Create("De&scription");
 			this._wmiDescriptionMenu.Name = "Tools.Test.Wmi.Description";
-			this._wmiDescriptionMenu.Click += (sender, e) => { this.CreateWindow(typeof(PanelWmiDescription).ToString(), true); };
+			this._wmiDescriptionMenu.Click += (sender, e) => this.CreateWindow(typeof(PanelWmiDescription).ToString(), true);
 			this._menuWmi.Items.Add(this._wmiDescriptionMenu);
 
 			return true;

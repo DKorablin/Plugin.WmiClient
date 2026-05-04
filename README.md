@@ -48,52 +48,14 @@ A powerful Windows Management Instrumentation (WMI) testing and exploration tool
 
 ## Installation
 
-### From GitHub Packages
-
-1. Add GitHub Packages as a NuGet source (one-time setup):
-   ```powershell
-   dotnet nuget add source "https://nuget.pkg.github.com/DKorablin/index.json" --name "GitHub-DKorablin" --username YOUR_GITHUB_USERNAME --password YOUR_GITHUB_PAT --store-password-in-clear-text
-   ```
-   
-   Or add to your `nuget.config`:
-   ```xml
-   <?xml version="1.0" encoding="utf-8"?>
-   <configuration>
-     <packageSources>
-       <add key="GitHub-DKorablin" value="https://nuget.pkg.github.com/DKorablin/index.json" />
-     </packageSources>
-     <packageSourceCredentials>
-       <GitHub-DKorablin>
-         <add key="Username" value="YOUR_GITHUB_USERNAME" />
-         <add key="ClearTextPassword" value="YOUR_GITHUB_PAT" />
-       </GitHub-DKorablin>
-     </packageSourceCredentials>
-   </configuration>
-   ```
-
-2. Install the package:
-   ```powershell
-   dotnet add package AlphaOmega.SAL.Plugin.WmiClient
-   ```
-   
-   Or using Package Manager Console:
-   ```powershell
-   Install-Package AlphaOmega.SAL.Plugin.WmiClient -Source "GitHub-DKorablin"
-   ```
-
-> **Note**: You'll need a GitHub Personal Access Token (PAT) with `read:packages` scope. Create one at [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens).
-
-### From Source
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/DKorablin/Plugin.WmiClient.git
-   ```
-
-2. Build the solution:
-   ```bash
-   cd Plugin.WmiClient
-   dotnet build -c Release
-   ```
+1. Download the release archive (.zip or .nupkg).
+2. Place the plugin assembly into the host application plugin directory (SAL / host supporting Windows environment):
+	- [Flatbed.Dialog](https://dkorablin.github.io/Flatbed-Dialog/)
+	- [Flatbed.Dialog (Lite)](https://dkorablin.github.io/Flatbed-Dialog-Lite)
+	- [Flatbed.MDI](https://dkorablin.github.io/Flatbed-MDI)
+	- [Flatbed.MDI (WPF)](https://dkorablin.github.io/Flatbed-MDI-Avalon)
+	- [Flatbed.MDI (AvaloniaUI)](https://dkorablin.github.io/Flatbed-MDI-AvaloniaUI)
+3. Restart the host application; Plugin.WmiClient should appear in the plugin list (Tools -> WinAPI -> WMI -> [WQL Query, WMI Method, WMI Event, Description]).
 
 ## Requirements
 
